@@ -89,7 +89,7 @@ java -version
 ## 🏗️ System Architecture
 
 ![ExpiryAlert Architecture](docs/screenshots/expiry-alert-architecture.png)
-```
+
 
 ## ⚙️ Configuration
 
