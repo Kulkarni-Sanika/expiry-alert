@@ -1,6 +1,8 @@
 <h1 align="center">📄 ExpiryAlert — Smart Document Expiry Tracker</h1>
 
-**Stay in Date, Never Late.**
+<p align="center">
+  <strong>Stay in Date, Never Late.</strong>
+</p>
 
 A Java-based web application that helps users track important documents, monitor expiry dates, and stay ahead of renewals with a centralized dashboard and timely expiry alerts.
 
