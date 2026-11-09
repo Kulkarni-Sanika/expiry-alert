@@ -1,5 +1,4 @@
 package com.expiryalert.entity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,12 +11,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 /**
- * One tracked document (licence, passport, insurance, ...).
+ * Tracked document.
  * Each object of this class is stored as one row in the "documents" table.
  */
 @Entity
@@ -69,8 +67,6 @@ public class Document {
         this.notes = notes;
     }
 
-    // ---------- Calculated values (not stored in the database) ----------
-
     /** Days from today until expiry. Negative when already expired, 0 when it expires today. */
     @Transient
     public long getDaysRemaining() {
@@ -85,7 +81,7 @@ public class Document {
         return ExpiryStatus.fromDaysRemaining(getDaysRemaining());
     }
 
-    /** Friendly sentence for the UI, for example "Expires in 5 days". */
+   
     @Transient
     public String getExpiryMessage() {
         long days = getDaysRemaining();
@@ -101,8 +97,6 @@ public class Document {
         }
         return "Expires in " + days + " days";
     }
-
-    // ---------- Getters and setters ----------
 
     public Long getId() {
         return id;
