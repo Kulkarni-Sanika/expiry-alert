@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Documents')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('documents')}"></nav>
+
+<main class="container py-4">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+  <div class="page-header d-flex justify-content-center align-items-center mb-4 text-center">
+    <div class="w-100">
+        <h1 class="h3 mb-1">Documents</h1>
+        <p class="text-muted mb-0">
+            Showing <b th:text="${#lists.size(documents)}">0</b>
+            of <b th:text="${totalCount}">0</b>
+        </p>
+    </div>
+</div>
+
+    <!-- ===== Empty state: nothing saved yet ===== -->
+    <div th:if="${totalCount == 0}" class="empty-state card-soft text-center">
+        <i class="bi bi-folder-plus empty-icon"></i>
+        <h2 class="h5">No documents yet</h2>
+        <p class="text-muted">Your saved documents will appear here.</p>
+        <a class="btn btn-navy" th:href="@{/documents/new}"><i class="bi bi-plus-lg"></i> Add your first document</a>
+    </div>
+
+    <th:block th:if="${totalCount > 0}">
+
+        <!-- ===== Search, filter and sort ===== -->
+        <form class="card-soft filter-bar mb-3" method="get" th:action="@{/documents}">
+            <div class="row g-2 align-items-end">
+                <div class="col-12 col-lg-4">
+                    <label class="form-label small mb-1" for="q">Search by name</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="q" name="q" th:value="${q}" placeholder="e.g. passport">
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <label class="form-label small mb-1" for="category">Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">All</option>
+                        <option th:each="c : ${categories}" th:value="${c}" th:text="${c}"
+                                th:selected="${c == selectedCategory}"></option>
+                    </select>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <label class="form-label small mb-1" for="status">Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">All</option>
+                        <option th:each="s : ${statuses}" th:value="${s.name()}" th:text="${s.label}"
+                                th:selected="${s.name() == selectedStatus}"></option>
+                    </select>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <label class="form-label small mb-1" for="sort">Sort by expiry</label>
+                    <select class="form-select" id="sort" name="sort">
+                        <option value="nearest" th:selected="${selectedSort != 'farthest'}">Nearest first</option>
+                        <option value="farthest" th:selected="${selectedSort == 'farthest'}">Farthest first</option>
+                    </select>
+                </div>
+                <div class="col-6 col-lg-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-navy flex-grow-1">Apply</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/documents}" title="Clear filters">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <!-- ===== No match for the filters ===== -->
+        <div th:if="${#lists.isEmpty(documents)}" class="empty-state card-soft text-center">
+            <i class="bi bi-search empty-icon"></i>
+            <h2 class="h5">No documents match your filters</h2>
+            <p class="text-muted">Try a different search word or clear the filters.</p>
+            <a class="btn btn-outline-secondary" th:href="@{/documents}">Clear filters</a>
+        </div>
+
+        <!-- ===== Table ===== -->
+        <div th:if="${!#lists.isEmpty(documents)}" class="card-soft p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 doc-table">
+                    <thead>
+                    <tr>
+                        <th>Document</th>
+                        <th>Category</th>
+                        <th>Expiry date</th>
+                        <th>Time left</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="d : ${documents}" th:classappend="'row-' + ${d.status.cssClass}">
+                        <td>
+                            <a class="fw-semibold doc-link" th:href="@{/documents/{id}(id=${d.id})}" th:text="${d.name}">Name</a>
+                            <div class="small text-muted" th:if="${d.documentNumber != null}" th:text="${d.documentNumber}">No.</div>
+                        </td>
+                        <td th:text="${d.category}">Category</td>
+                        <td class="text-nowrap" th:text="${#temporals.format(d.expiryDate, 'dd MMM yyyy')}">01 Jan 2030</td>
+                        <td class="text-nowrap" th:text="${d.expiryMessage}">Expires in 3 days</td>
+                        <td><span th:replace="~{fragments/layout :: statusBadge(${d})}"></span></td>
+                      <td class="text-center text-nowrap">
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{/documents/{id}(id=${d.id})}" title="View">
+                                <i class="bi bi-eye"></i></a>
+                            <a class="btn btn-sm btn-outline-primary" th:href="@{/documents/{id}/edit(id=${d.id})}" title="Edit">
+                                <i class="bi bi-pencil"></i></a>
+                            <button type="button" class="btn btn-sm btn-outline-danger" title="Delete"
+                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                    th:attr="data-id=${d.id},data-name=${d.name}">
+                                <i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </th:block>
+</main>
+
+<div th:replace="~{fragments/layout :: deleteModal}"></div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

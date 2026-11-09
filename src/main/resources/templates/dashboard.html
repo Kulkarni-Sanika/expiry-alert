@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/layout :: navbar('dashboard')}"></nav>
+
+    <main class="container py-4">
+        <div th:replace="~{fragments/layout :: flash}"></div>
+
+        <div class="page-header d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <div>
+                <h1 class="h3 mb-1">Dashboard</h1>
+                <p class="text-muted mb-0">
+                    Your document expiry overview for today,
+                    <span th:text="${#temporals.format(#temporals.createToday(), 'EEEE, dd MMMM yyyy')}">today</span>.
+                </p>
+            </div>
+
+        
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${stats.total() == 0}" class="empty-state card-soft text-center">
+            <i class="bi bi-folder-plus empty-icon"></i>
+            <h2 class="h5">No documents yet</h2>
+            <p class="text-muted">
+                Add your licence, insurance, passport or any other document
+                and ExpiryAlert will warn you before it expires.
+            </p>
+            <a class="btn btn-navy" th:href="@{/documents/new}">
+                <i class="bi bi-plus-lg"></i> Add your first document
+            </a>
+        </div>
+
+        <th:block th:if="${stats.total() > 0}">
+
+            <!-- Document summary -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-lg-3">
+                    <a class="stat-card stat-total" th:href="@{/documents}">
+                        <div class="stat-icon">
+                            <i class="bi bi-files"></i>
+                        </div>
+                        <div class="stat-number" th:text="${stats.total()}">0</div>
+                        <div class="stat-label">Total documents</div>
+                    </a>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <a class="stat-card stat-expired" th:href="@{/documents(status='EXPIRED')}">
+                        <div class="stat-icon">
+                            <i class="bi bi-x-octagon"></i>
+                        </div>
+                        <div class="stat-number" th:text="${stats.expired()}">0</div>
+                        <div class="stat-label">Already expired</div>
+                    </a>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <a class="stat-card stat-soon" th:href="@{/documents(status='EXPIRING_SOON')}">
+                        <div class="stat-icon">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-number" th:text="${stats.expiringSoon()}">0</div>
+                        <div class="stat-label">Expiring within 7 days</div>
+                    </a>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <a class="stat-card stat-upcoming" th:href="@{/documents(sort='nearest')}">
+                        <div class="stat-icon">
+                            <i class="bi bi-calendar-event"></i>
+                        </div>
+                        <div class="stat-number" th:text="${stats.expiringWithin30Days()}">0</div>
+                        <div class="stat-label">Expiring within 30 days</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Expiry alerts -->
+            <div class="card-soft">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">
+                        <i class="bi bi-bell-fill text-warning"></i> Needs your Attention
+                    </h2>
+                    <a class="small" th:href="@{/documents}">View all documents</a>
+                </div>
+
+                <div th:if="${#lists.isEmpty(alerts)}" class="text-center text-muted py-4">
+                    <i class="bi bi-emoji-smile fs-2 d-block mb-2"></i>
+                    All clear. Nothing expires in the next 30 days.
+                </div>
+
+                <div th:each="d : ${alerts}"
+                     class="alert-item"
+                     th:classappend="'alert-item-' + ${d.status.cssClass}">
+
+                    <div class="alert-main">
+                        <a class="alert-title"
+                           th:href="@{/documents/{id}(id=${d.id})}"
+                           th:text="${d.name}">Document</a>
+
+                        <div class="small text-muted">
+                            <span th:text="${d.category}">Category</span>
+                            &middot;
+                            <span th:text="${#temporals.format(d.expiryDate, 'dd MMM yyyy')}">01 Jan 2030</span>
+                        </div>
+                    </div>
+
+                    <div class="alert-side text-end">
+                        <div class="small fw-semibold" th:text="${d.expiryMessage}">
+                            Expires in 3 days
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </th:block>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

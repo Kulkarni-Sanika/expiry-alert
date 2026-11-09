@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<!-- Shared <head>: used by every page as head('Page title') -->
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' | ExpiryAlert'">ExpiryAlert</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<!-- Top navigation bar: navbar('dashboard') or navbar('documents') highlights the active link -->
+
+<nav th:fragment="navbar(active)" class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
+    <div class="container position-relative">
+
+        <!-- Logo on the left -->
+        <a class="navbar-brand fw-bold" th:href="@{/}">
+            <i class="bi bi-shield-check"></i>
+            Expiry<span class="brand-accent">Alert</span>
+        </a>
+
+        <!-- Mobile toggle -->
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mainNav"
+                aria-controls="mainNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+
+            <!-- Navigation links in the center -->
+            <ul class="navbar-nav navbar-center mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link"
+                       th:classappend="${active == 'dashboard'} ? 'active'"
+                       th:href="@{/}">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       th:classappend="${active == 'documents'} ? 'active'"
+                       th:href="@{/documents}">
+                        <i class="bi bi-folder2-open"></i> Documents
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Button on the right -->
+            <a class="btn btn-light btn-sm fw-semibold navbar-add-btn"
+               th:href="@{/documents/new}">
+                <i class="bi bi-plus-lg"></i> Add Document
+            </a>
+
+        </div>
+    </div>
+</nav>
+
+
+<!-- Green message shown after add, update and delete -->
+<div th:fragment="flash">
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert"
+         th:if="${successMessage != null}">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <div th:text="${successMessage}">Saved.</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+
+<!-- Coloured status badge: statusBadge(${document}) -->
+<span th:fragment="statusBadge(doc)" class="status-badge" th:classappend="'status-' + ${doc.status.cssClass}">
+    
+    <span th:text="${doc.status.label}">Valid</span>
+</span>
+
+<!-- Confirmation pop-up for deleting. app.js fills in the name and the form address. -->
+<div th:fragment="deleteModal" class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" th:action="@{/documents}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete document?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    You are about to delete <strong id="deleteDocName">this document</strong>.
+                    This cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Footer and JavaScript (Bootstrap + our small script) -->
+<footer th:fragment="footer" class="app-footer text-center">
+    <div class="container">
+        <small>ExpiryAlert &middot; Stay in Date, Never Late.</small>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/app.js}"></script>
+</footer>
+
+</body>
+</html>

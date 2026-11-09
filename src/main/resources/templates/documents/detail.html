@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${document.name})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('documents')}"></nav>
+
+<main class="container py-4">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <a class="small text-decoration-none" th:href="@{/documents}"><i class="bi bi-arrow-left"></i> Back to documents</a>
+
+            <div class="card-soft mt-2 detail-card" th:classappend="'detail-' + ${document.status.cssClass}">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                    <div>
+                        <h1 class="h3 mb-1" th:text="${document.name}">Document name</h1>
+                        <span class="text-muted" th:text="${document.category}">Category</span>
+                    </div>
+                    <span th:replace="~{fragments/layout :: statusBadge(${document})}"></span>
+                </div>
+
+                <div class="countdown mb-4">
+                    <i class="bi" th:classappend="${document.status.icon}"></i>
+                    <span th:text="${document.expiryMessage}">Expires in 3 days</span>
+                </div>
+
+                <dl class="row detail-list mb-0">
+                    <dt class="col-sm-4">Document number</dt>
+                    <dd class="col-sm-8">
+                        <span th:if="${document.documentNumber != null}" th:text="${document.documentNumber}">123</span>
+                        <span th:if="${document.documentNumber == null}" class="text-muted">Not provided</span>
+                    </dd>
+
+                    <dt class="col-sm-4">Issue date</dt>
+                    <dd class="col-sm-8">
+                        <span th:if="${document.issueDate != null}"
+                              th:text="${#temporals.format(document.issueDate, 'dd MMMM yyyy')}">01 January 2020</span>
+                        <span th:if="${document.issueDate == null}" class="text-muted">Not provided</span>
+                    </dd>
+
+                    <dt class="col-sm-4">Expiry date</dt>
+                    <dd class="col-sm-8"
+                        th:text="${#temporals.format(document.expiryDate, 'dd MMMM yyyy')}">01 January 2030</dd>
+
+                    <dt class="col-sm-4">Notes</dt>
+                    <dd class="col-sm-8">
+                        <span th:if="${document.notes != null}" th:text="${document.notes}" class="notes-text">Notes</span>
+                        <span th:if="${document.notes == null}" class="text-muted">No notes</span>
+                    </dd>
+                </dl>
+
+                <hr>
+                <div class="d-flex justify-content-center gap-2">
+    <a class="btn btn-outline-primary" th:href="@{/documents/{id}/edit(id=${document.id})}">
+        <i class="bi bi-pencil"></i> Edit
+    </a>
+
+    <button type="button" class="btn btn-outline-danger"
+            data-bs-toggle="modal" data-bs-target="#deleteModal"
+            th:attr="data-id=${document.id},data-name=${document.name}">
+        <i class="bi bi-trash"></i> Delete
+    </button>
+</div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: deleteModal}"></div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
