@@ -1,16 +1,15 @@
 package com.expiryalert.entity;
-
 /**
- * The four expiry states of a document.
+ * Defines the four possible expiry states of a document.
  *
- * RULE (days remaining = expiry date minus today's date):
- *   below 0       -> EXPIRED        (expiry date is before today)
- *   0 to 7        -> EXPIRING_SOON  (today counts as "expiring soon", NOT expired)
- *   8 to 30       -> UPCOMING
- *   more than 30  -> VALID
+ * Expiry status is determined by the number of days remaining:
+ * - Negative days: EXPIRED
+ * - 0–7 days: EXPIRING_SOON
+ * - 8–30 days: UPCOMING
+ * - More than 30 days: VALID
  *
- * A document that expires today is still usable until the end of today,
- * so it becomes EXPIRED only from tomorrow onwards.
+ * Documents expiring today are considered EXPIRING_SOON
+ * and become EXPIRED from the following day.
  */
 public enum ExpiryStatus {
 
@@ -40,8 +39,6 @@ public enum ExpiryStatus {
     public String getIcon() {
         return icon;
     }
-
-    /** Converts "days remaining" into a status. This is the single place where the rule lives. */
     public static ExpiryStatus fromDaysRemaining(long daysRemaining) {
         if (daysRemaining < 0) {
             return EXPIRED;
@@ -54,8 +51,6 @@ public enum ExpiryStatus {
         }
         return VALID;
     }
-
-    /** Reads a status from a request parameter such as "EXPIRED". Returns null for blank or unknown text. */
     public static ExpiryStatus fromName(String name) {
         if (name == null || name.isBlank()) {
             return null;
