@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Entry point of the application.
- * @SpringBootApplication switches on auto-configuration and scans this package
- * (and all sub-packages) for controllers, services and repositories.
+ * Main entry point of the Spring Boot application.
+ * Enables auto-configuration and component scanning for the application package
+ * and its sub-packages.
  */
 @SpringBootApplication
 public class ExpiryAlertApplication {
