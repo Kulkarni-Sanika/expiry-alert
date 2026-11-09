@@ -17,10 +17,17 @@ A Java-based web application that helps users track important documents, monitor
 
 ## 🖥️ Screenshots
 
-| Dashboard | Documents | Add / Edit |
-|---|---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Documents](docs/screenshots/documents.png) | 
-![Add or Edit Document](docs/screenshots/form.png) (docs/screenshots/details.png)|
+### Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Documents
+![Documents](docs/screenshots/documents.png)
+
+### Add / Edit Document
+![Add or Edit Document](docs/screenshots/form.png)
+
+### Document Details
+![Document Details](docs/screenshots/details.png)
 
 
 ## 🛠️ Tech Stack
