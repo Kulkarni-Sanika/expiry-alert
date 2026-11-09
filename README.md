@@ -1,4 +1,4 @@
-<center># 📄 ExpiryAlert — Smart Document Expiry Tracker<center
+<h1 align="center">📄 ExpiryAlert — Smart Document Expiry Tracker</h1>
 
 **Stay in Date, Never Late.**
 
